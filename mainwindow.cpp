@@ -28,8 +28,17 @@ Mat Original;
 Mat Respaldo;
 Mat Grises, intermedio;
 Mat Resp;
+Mat Copia1;
+Mat Copia2;
+Mat Copia3;
+Mat GrisesT;
+Mat3b canvas;
+string buttonText("Azul");
+string winName = "My cool GUI v0.1";
+Rect button;
 Mat Guardar;
 Mat Cuadro(300, 1000, CV_8UC3);
+Mat Cuadro2(100, 100, CV_8UC3);
 string s;
 int limitC=50;
 int limitAnt=0;
@@ -37,14 +46,20 @@ int uno=0, dos=100;
 int nCanales;
 int nR;
 int nC;
-int infeior_alpha = 20;
-int superior_alpha = 45;
+int infeior_alpha = 0;
+int superior_alpha = 0;
 int xpos, ypos;
 int xpos2, ypos2;
 int dis=0;
 double Matrix[TAM][3]={{0,0,0}};
 int pixels[TAM][2]={{0,0}};
-
+int infeior_alphaB = 0;
+int superior_alphaB = 0;
+int infeior_alphaG = 0;
+int superior_alphaG = 0;
+int infeior_alphaR = 0;
+int superior_alphaR = 0;
+char key;
 double cov[3][3] = {0.0};
 double inv[3][3] = {0.0};
 double Y[3] = {0.0};
@@ -53,6 +68,298 @@ int colores = 0;
 int bandera = 0;
 
 
+void CallBackFuncC(int event, int x, int y, int flags, void* userdata)
+{
+     if  ( event == EVENT_LBUTTONDOWN ){
+        xpos = x; ypos=y;
+        cont = 1;
+        bandera = 1;
+        Point3_<uchar>* p = Original.ptr<Point3_<uchar> >(ypos,xpos);
+        rectangle(Cuadro2,Point(0, 0),Point(100, 100),Scalar(p->x, p->y, p->z),CV_FILLED);
+                    
+        Matrix[0][0] = (double) p->x;
+        Matrix[0][1] = (double) p->y;
+        Matrix[0][2] = (double) p->z;
+        //printf("%d B: %d  G:%d   R:%d\n", cont, p->x, p->y, p->z);
+    
+                
+            
+        Original.copyTo(Resp);
+            
+        imshow("Original",Resp);
+        cv::imshow("Cuadro", Cuadro2);
+        
+    }
+
+    else if  ( event == EVENT_RBUTTONDOWN ){
+        printf("Se guardó la imagen\n");
+        cv::imwrite("Segmentacion.jpg", Guardar);
+        
+    }
+}
+
+void CallBackFuncE(int event, int x, int y, int flags, void* userdata)
+{
+     if  ( event == EVENT_LBUTTONDOWN ){
+        xpos = x; ypos=y;
+        cont = 1;
+        bandera = 1;
+        Point3_<uchar>* p = Original.ptr<Point3_<uchar> >(ypos,xpos);
+        rectangle(Cuadro2,Point(0, 0),Point(100, 100),Scalar(p->x, p->y, p->z),CV_FILLED);
+                    
+        Matrix[0][0] = (double) p->x;
+        Matrix[0][1] = (double) p->y;
+        Matrix[0][2] = (double) p->z;
+        //printf("%d B: %d  G:%d   R:%d\n", cont, p->x, p->y, p->z);
+    
+                
+            
+        Original.copyTo(Resp);
+            
+        imshow("Original",Resp);
+        cv::imshow("Cuadro", Cuadro2);
+        
+    }
+
+    else if  ( event == EVENT_RBUTTONDOWN ){
+        printf("Se guardó la imagen\n");
+        cv::imwrite(s, Guardar);
+        
+    }
+}
+
+
+void funcionR(int valor, void* Datos) {
+    //printf("inferior: %d\n", infeior_alphaB);
+    //printf("superior: %d\n", superior_alphaB);
+    nCanales = Copia1.channels();
+    nR = Copia1.rows;
+    nC = Copia1.cols * nCanales;
+
+    //printf("%d %d \n", nCanales ,nR);
+    int i, j;
+    for (j = 0; j < nR; j++) {
+        uchar* renglon = Copia1.ptr <uchar>(j);
+        
+        for (i = 0; i < nC; i += nCanales) {
+    
+            if((*(renglon + i) >= infeior_alphaB) && (*(renglon + i) <= superior_alphaB)){
+                *(renglon + i) = 255;
+                *(renglon + i+1) = 255;
+                *(renglon + i+2) = 255;
+
+            }
+            else{
+                *(renglon + i) = 0;
+                *(renglon + i+1) = 0;
+                *(renglon + i+2) = 0;
+            }
+            
+        }
+    }
+
+    for (j = 0; j < nR; j++) {
+        uchar* renglon = Copia2.ptr <uchar>(j);
+        
+        for (i = 0; i < nC; i += nCanales) {
+    
+            if((*(renglon + i+1) >= infeior_alphaG) && (*(renglon + i+1) <= superior_alphaG)){
+                *(renglon + i) = 255;
+                *(renglon + i+1) = 255;
+                *(renglon + i+2) = 255;
+
+            }
+            else{
+                *(renglon + i) = 0;
+                *(renglon + i+1) = 0;
+                *(renglon + i+2) = 0;
+            }
+            
+        }
+    }
+    
+    for (j = 0; j < nR; j++) {
+        uchar* renglon = Copia3.ptr <uchar>(j);
+        
+        for (i = 0; i < nC; i += nCanales) {
+    
+            if((*(renglon + i+2) >= infeior_alphaR) && (*(renglon + i+2) <= superior_alphaR)){
+                *(renglon + i) = 255;
+                *(renglon + i+1) = 255;
+                *(renglon + i+2) = 255;
+
+            }
+            else{
+                *(renglon + i) = 0;
+                *(renglon + i+1) = 0;
+                *(renglon + i+2) = 0;
+            }
+            
+        }
+    }
+
+    cv::namedWindow("Segmentacion", WINDOW_NORMAL);
+    cv::imshow("Segmentacion", Grises);
+    cv::namedWindow("Segmentacion Azul", WINDOW_NORMAL);
+    cv::imshow("Segmentacion Azul", Copia1);
+    cv::imwrite("Copia1.jpg",Copia1);
+    cv::namedWindow("Segmentacion Verde", WINDOW_NORMAL);
+    cv::imshow("Segmentacion Verde", Copia2);
+    cv::imwrite("Copia2.jpg",Copia2);
+    cv::namedWindow("Segmentacion Rojo", WINDOW_NORMAL);
+    cv::imshow("Segmentacion Rojo", Copia3);
+    cv::imwrite("Copia3.jpg",Copia3);
+    Grises = GrisesT.clone();
+    Copia1 = Respaldo.clone();
+    Copia2 = Respaldo.clone();
+    Copia3 = Respaldo.clone();
+
+
+
+}
+
+void CallBackFuncA(int event, int x, int y, int flags, void* userdata)
+{
+     int i, j;
+     if  ( event == EVENT_LBUTTONDOWN ){
+        printf("Entra Azul\n");
+        Mat TC = cv::imread("Copia1.jpg");
+        Copia1 = TC.clone();
+        Grises = GrisesT.clone();
+
+        for (j = 0; j < nR; j++) {
+            uchar* renglonO = Respaldo.ptr <uchar>(j);
+            uchar* renglon = Copia1.ptr <uchar>(j);
+            uchar* renglon2 = Grises.ptr <uchar>(j);
+            int banderin = 0;
+            for (i = 0; i < nC; i += nCanales) {
+                banderin = 0;
+                
+                    if (*(renglon + i+0) == 255)
+                        banderin++;
+                    if (*(renglon + i+1) == 255)
+                        banderin++;
+                    if (*(renglon + i+2) == 255)
+                        banderin++;
+                    
+                
+                
+                if(banderin == 3){
+                    *(renglon2 + i) = *(renglonO + i );
+                    *(renglon2 + i + 1) = *(renglonO + i + 1);
+                    *(renglon2 + i + 2) = *(renglonO + i + 2);
+                }
+            }
+        }
+        
+                
+            
+    cv::namedWindow("Segmentacion", WINDOW_NORMAL);
+    cv::imshow("Segmentacion", Grises);
+    Grises = GrisesT.clone();
+    }
+
+    else if  ( event == EVENT_RBUTTONDOWN ){
+        printf("Se guardó la imagen\n");
+        cv::imwrite("Cromatizacion.jpg", Grises);
+        
+    }
+}
+
+void CallBackFuncV(int event, int x, int y, int flags, void* userdata)
+{
+     int i, j;
+     if  ( event == EVENT_LBUTTONDOWN ){
+        printf("Entra Verde\n");
+        Mat TC = cv::imread("Copia2.jpg");
+        Copia1 = TC.clone();
+        Grises = GrisesT.clone();
+
+        for (j = 0; j < nR; j++) {
+            uchar* renglonO = Respaldo.ptr <uchar>(j);
+            uchar* renglon = Copia1.ptr <uchar>(j);
+            uchar* renglon2 = Grises.ptr <uchar>(j);
+            int banderin = 0;
+            for (i = 0; i < nC; i += nCanales) {
+                banderin = 0;
+                
+                    if (*(renglon + i+0) == 255)
+                        banderin++;
+                    if (*(renglon + i+1) == 255)
+                        banderin++;
+                    if (*(renglon + i+2) == 255)
+                        banderin++;
+                    
+                
+                
+                if(banderin == 3){
+                    *(renglon2 + i) = *(renglonO + i );
+                    *(renglon2 + i + 1) = *(renglonO + i + 1);
+                    *(renglon2 + i + 2) = *(renglonO + i + 2);
+                }
+            }
+        }
+        
+                
+            
+    cv::namedWindow("Segmentacion", WINDOW_NORMAL);
+    cv::imshow("Segmentacion", Grises);
+    Grises = GrisesT.clone();
+    }
+
+    else if  ( event == EVENT_RBUTTONDOWN ){
+        printf("Se guardó la imagen\n");
+        cv::imwrite("Cromatizacion.jpg", Grises);
+        
+    }
+}
+void CallBackFuncR(int event, int x, int y, int flags, void* userdata)
+{
+     int i, j;
+     if  ( event == EVENT_LBUTTONDOWN ){
+        printf("Entra Rojo\n");
+        Mat TC = cv::imread("Copia3.jpg");
+        Copia1 = TC.clone();
+        Grises = GrisesT.clone();
+
+        for (j = 0; j < nR; j++) {
+            uchar* renglonO = Respaldo.ptr <uchar>(j);
+            uchar* renglon = Copia1.ptr <uchar>(j);
+            uchar* renglon2 = Grises.ptr <uchar>(j);
+            int banderin = 0;
+            for (i = 0; i < nC; i += nCanales) {
+                banderin = 0;
+                
+                    if (*(renglon + i+0) == 255)
+                        banderin++;
+                    if (*(renglon + i+1) == 255)
+                        banderin++;
+                    if (*(renglon + i+2) == 255)
+                        banderin++;
+                    
+                
+                
+                if(banderin == 3){
+                    *(renglon2 + i) = *(renglonO + i );
+                    *(renglon2 + i + 1) = *(renglonO + i + 1);
+                    *(renglon2 + i + 2) = *(renglonO + i + 2);
+                }
+            }
+        }
+        
+                
+            
+    cv::namedWindow("Segmentacion", WINDOW_NORMAL);
+    cv::imshow("Segmentacion", Grises);
+    Grises = GrisesT.clone();
+    }
+
+    else if  ( event == EVENT_RBUTTONDOWN ){
+        printf("Se guardó la imagen\n");
+        cv::imwrite("Cromatizacion.jpg", Grises);
+        
+    }
+}
 
 
 
@@ -300,6 +607,15 @@ void mean(double Matrix[TAM][3], int tam, double Y[3]){
         Y[i] = ((suma*1.0)/(double)tam);
     }
 }
+
+void mean2(double Matrix[TAM][3], int tam, double Y[3]){
+    Y[0] = Matrix[0][0];
+    Y[1] = Matrix[0][1];
+    Y[2] = Matrix[0][2];
+    
+}
+
+
 void multiply1(double mat1[1][3], double mat2[3][3], double res[1][3]){ 
     int x, i, j; 
     int m1 = 1, m2=3, n1=3, n2=3;
@@ -542,9 +858,21 @@ void MainWindow::on_cuadradoBut_clicked()
     bandera = 0;
     s.append("S.jpg");
     Original=img.clone();
+    
+
+
     nCanales = Original.channels();
     nR = Original.rows;
     nC = Original.cols * nCanales;
+
+    for (int jj = 0; jj < Cuadro2.rows; jj++) {
+        uchar* renglon = Cuadro2.ptr <uchar>(jj);
+        for (int ii = 0; ii < (Cuadro2.cols * Cuadro2.channels()); ii+= Cuadro2.channels()) {
+            *(renglon + ii) = 255;
+            *(renglon + ii+1) = 255;
+            *(renglon + ii+2) = 255;
+        }
+    }
     
     //cv::cvtColor(Original, intermedio, CV_BGR2GRAY);
     //cv::cvtColor(intermedio, Grises, CV_GRAY2BGR);
@@ -554,44 +882,32 @@ void MainWindow::on_cuadradoBut_clicked()
     Respaldo = Original.clone();
     Guardar = Respaldo.clone();
 
-    //Mat Cuadro(100, 1000, CV_8UC3);
-    for (int jj = 0; jj < Cuadro.rows; jj++) {
-        uchar* renglon = Cuadro.ptr <uchar>(jj);
-        for (int ii = 0; ii < (Cuadro.cols * Cuadro.channels()); ii+= Cuadro.channels()) {
-            *(renglon + ii) = 255;
-            *(renglon + ii+1) = 255;
-            *(renglon + ii+2) = 255;
-        }
-    }
-
     cv::namedWindow("Cuadro", WINDOW_NORMAL);
-    cv::imshow("Cuadro", Cuadro);
+    cv::imshow("Cuadro", Cuadro2);
 
     cv::namedWindow("Original", WINDOW_NORMAL);
     cv::imshow("Original", Original);
     
     cv::namedWindow("Color", WINDOW_NORMAL);
     cv::imshow("Color", Grises);
-    setMouseCallback("Original", CallBackFunc, NULL);
-    setMouseCallback("Cuadro", CallBackFunc2, NULL);
+    setMouseCallback("Original", CallBackFuncE, NULL);
     createTrackbar("Dis", "Original", &dis, 255 , Euclideana, &dis);
 
     
-    printf("Realiza dos click para marcar la región en donde selecionara los puntos\n");
+    printf("Realiza un clik en un pixel y presiona c para continuar \n");
     
     while(true){
-        
         if ( bandera =(char)cv::waitKey(0) == 'c')
             bandera = 1;
 
-        if( bandera || ((cont-2)==25)){
+        if( bandera){
+
             //if((char)cv::waitKey() == 'c' && cont>=2){
             //printf("Empieza\n");
                 
-            cv::imshow("Cuadro", Cuadro);
-            printf("\nSeleccionó %d puntos\n", cont-2);
-                mean(Matrix, cont-2, Y);
-                printf("\nMedia de colores: \n%lf,%lf,%lf\n",Y[0],Y[1],Y[2]);
+                printf("\nSeleccionó el punto:\n");
+                mean2(Matrix, 1, Y);
+                printf("%0.lf B: %0.lf  G:%0.lf   R:%d\n",Y[0],Y[1],Y[2]);
                 printf("Haga click derecho para guardar\n");
                 cont = 0;
                 dis = 0;
@@ -601,7 +917,6 @@ void MainWindow::on_cuadradoBut_clicked()
             //}((cont-2)==25) || (char)cv::waitKey(0) == 'c'
         }
     }
-
 }
 
 void MainWindow::on_cubicoBut_clicked()
@@ -624,9 +939,20 @@ void MainWindow::on_cubicoBut_clicked()
     bandera = 0;
     s.append("S.jpg");
     Original=img.clone();
-    nCanales = Original.channels();
+    
+
+     nCanales = Original.channels();
     nR = Original.rows;
     nC = Original.cols * nCanales;
+
+    for (int jj = 0; jj < Cuadro2.rows; jj++) {
+        uchar* renglon = Cuadro2.ptr <uchar>(jj);
+        for (int ii = 0; ii < (Cuadro2.cols * Cuadro2.channels()); ii+= Cuadro2.channels()) {
+            *(renglon + ii) = 255;
+            *(renglon + ii+1) = 255;
+            *(renglon + ii+2) = 255;
+        }
+    }
     
     //cv::cvtColor(Original, intermedio, CV_BGR2GRAY);
     //cv::cvtColor(intermedio, Grises, CV_GRAY2BGR);
@@ -636,44 +962,32 @@ void MainWindow::on_cubicoBut_clicked()
     Respaldo = Original.clone();
     Guardar = Respaldo.clone();
 
-    //Mat Cuadro(100, 1000, CV_8UC3);
-    for (int jj = 0; jj < Cuadro.rows; jj++) {
-        uchar* renglon = Cuadro.ptr <uchar>(jj);
-        for (int ii = 0; ii < (Cuadro.cols * Cuadro.channels()); ii+= Cuadro.channels()) {
-            *(renglon + ii) = 255;
-            *(renglon + ii+1) = 255;
-            *(renglon + ii+2) = 255;
-        }
-    }
-
     cv::namedWindow("Cuadro", WINDOW_NORMAL);
-    cv::imshow("Cuadro", Cuadro);
+    cv::imshow("Cuadro", Cuadro2);
 
     cv::namedWindow("Original", WINDOW_NORMAL);
     cv::imshow("Original", Original);
     
     cv::namedWindow("Color", WINDOW_NORMAL);
     cv::imshow("Color", Grises);
-    setMouseCallback("Original", CallBackFunc, NULL);
-    setMouseCallback("Cuadro", CallBackFunc2, NULL);
+    setMouseCallback("Original", CallBackFuncC, NULL);
     createTrackbar("Dis", "Original", &dis, 255 , Cubo, &dis);
 
     
-    printf("Realiza dos click para marcar la región en donde selecionara los puntos\n");
+    printf("Realiza un clik en un pixel y presiona c para continuar \n");
     
     while(true){
-        
         if ( bandera =(char)cv::waitKey(0) == 'c')
             bandera = 1;
 
-        if( bandera || ((cont-2)==25)){
+        if( bandera){
+
             //if((char)cv::waitKey() == 'c' && cont>=2){
             //printf("Empieza\n");
                 
-            cv::imshow("Cuadro", Cuadro);
-            printf("\nSeleccionó %d puntos\n", cont-2);
-                mean(Matrix, cont-2, Y);
-                printf("\nMedia de colores: \n%lf,%lf,%lf\n",Y[0],Y[1],Y[2]);
+                printf("\nSeleccionó el punto:\n");
+                mean2(Matrix, 1, Y);
+                printf("%0.lf B: %0.lf  G:%0.lf   R:%d\n",Y[0],Y[1],Y[2]);
                 printf("Haga click derecho para guardar\n");
                 cont = 0;
                 dis = 0;
@@ -785,65 +1099,114 @@ void MainWindow::on_cromaticoBut_clicked()
     bandera = 0;
     s.append("S.jpg");
     Original=img.clone();
-    nCanales = Original.channels();
-    nR = Original.rows;
-    nC = Original.cols * nCanales;
     
-    //cv::cvtColor(Original, intermedio, CV_BGR2GRAY);
-    //cv::cvtColor(intermedio, Grises, CV_GRAY2BGR);
+
+    Copia1 = Original.clone();
+    Copia2 = Original.clone();
+    Copia3 = Original.clone();
+    Respaldo = Original.clone();
+
     cv::cvtColor(Original, intermedio, COLOR_BGR2GRAY);
     cv::cvtColor(intermedio, Grises, COLOR_GRAY2BGR);
 
-    Respaldo = Original.clone();
-    Guardar = Respaldo.clone();
+    GrisesT = Grises.clone();
+    ///
+    nCanales = Copia1.channels();
+    nR = Copia1.rows;
+    nC = Copia1.cols * nCanales;
 
-    //Mat Cuadro(100, 1000, CV_8UC3);
-    for (int jj = 0; jj < Cuadro.rows; jj++) {
-        uchar* renglon = Cuadro.ptr <uchar>(jj);
-        for (int ii = 0; ii < (Cuadro.cols * Cuadro.channels()); ii+= Cuadro.channels()) {
-            *(renglon + ii) = 255;
-            *(renglon + ii+1) = 255;
-            *(renglon + ii+2) = 255;
-        }
-    }
-
-    cv::namedWindow("Cuadro", WINDOW_NORMAL);
-    cv::imshow("Cuadro", Cuadro);
-
-    cv::namedWindow("Original", WINDOW_NORMAL);
-    cv::imshow("Original", Original);
-    
-    cv::namedWindow("Color", WINDOW_NORMAL);
-    cv::imshow("Color", Grises);
-    setMouseCallback("Original", CallBackFunc, NULL);
-    setMouseCallback("Cuadro", CallBackFunc2, NULL);
-    createTrackbar("Dis", "Original", &dis, 255 , Cubo, &dis);
-
-    
-    printf("Realiza dos click para marcar la región en donde selecionara los puntos\n");
-    
-    while(true){
+    //printf("%d %d \n", nCanales ,nR);
+    int i, j;
+    for (j = 0; j < nR; j++) {
+        uchar* renglon = Copia1.ptr <uchar>(j);
         
-        if ( bandera =(char)cv::waitKey(0) == 'c')
-            bandera = 1;
+        for (i = 0; i < nC; i += nCanales) {
+    
+            if((*(renglon + i) >= infeior_alphaB) && (*(renglon + i) <= superior_alphaB)){
+                *(renglon + i) = 255;
+                *(renglon + i+1) = 255;
+                *(renglon + i+2) = 255;
 
-        if( bandera || ((cont-2)==25)){
-            //if((char)cv::waitKey() == 'c' && cont>=2){
-            //printf("Empieza\n");
-                
-            cv::imshow("Cuadro", Cuadro);
-            printf("\nSeleccionó %d puntos\n", cont-2);
-                mean(Matrix, cont-2, Y);
-                printf("\nMedia de colores: \n%lf,%lf,%lf\n",Y[0],Y[1],Y[2]);
-                printf("Haga click derecho para guardar\n");
-                cont = 0;
-                dis = 0;
-                bandera = 0;
-                colores = 0;
-                
-            //}((cont-2)==25) || (char)cv::waitKey(0) == 'c'
+            }
+            else{
+                *(renglon + i) = 0;
+                *(renglon + i+1) = 0;
+                *(renglon + i+2) = 0;
+            }
+            
         }
     }
+
+    for (j = 0; j < nR; j++) {
+        uchar* renglon = Copia2.ptr <uchar>(j);
+        
+        for (i = 0; i < nC; i += nCanales) {
+    
+            if((*(renglon + i+1) >= infeior_alphaG) && (*(renglon + i+1) <= superior_alphaG)){
+                *(renglon + i) = 255;
+                *(renglon + i+1) = 255;
+                *(renglon + i+2) = 255;
+
+            }
+            else{
+                *(renglon + i) = 0;
+                *(renglon + i+1) = 0;
+                *(renglon + i+2) = 0;
+            }
+            
+        }
+    }
+
+    for (j = 0; j < nR; j++) {
+        uchar* renglon = Copia3.ptr <uchar>(j);
+        
+        for (i = 0; i < nC; i += nCanales) {
+    
+            if((*(renglon + i+2) >= infeior_alphaR) && (*(renglon + i+2) <= superior_alphaR)){
+                *(renglon + i) = 255;
+                *(renglon + i+1) = 255;
+                *(renglon + i+2) = 255;
+
+            }
+            else{
+                *(renglon + i) = 0;
+                *(renglon + i+1) = 0;
+                *(renglon + i+2) = 0;
+            }
+            
+        }
+    }
+    ///
+
+    cv::namedWindow("Segmentacion", WINDOW_NORMAL);
+    cv::imshow("Segmentacion", Grises);
+    //setMouseCallback("Segmentacion Azul", CallBackFuncC, NULL);
+    cv::namedWindow("Segmentacion Azul", WINDOW_NORMAL);
+    cv::imshow("Segmentacion Azul", Copia1);
+    cv::namedWindow("Segmentacion Verde", WINDOW_NORMAL);
+    cv::imshow("Segmentacion Verde", Copia2);
+    cv::namedWindow("Segmentacion Rojo", WINDOW_NORMAL);
+    cv::imshow("Segmentacion Rojo", Copia3);
+    setMouseCallback("Segmentacion Azul", CallBackFuncA, NULL);
+    setMouseCallback("Segmentacion Verde", CallBackFuncV, NULL);
+    setMouseCallback("Segmentacion Rojo", CallBackFuncR, NULL);
+    Copia1 = Respaldo.clone();
+    Copia2 = Respaldo.clone();
+    Copia3 = Respaldo.clone();
+
+
+
+    //Ventana original
+    cv::namedWindow("Imagen original", WINDOW_NORMAL);
+    cv::createTrackbar("Limite inferior Azul", "Imagen original", &infeior_alphaB, 255, funcionR, &infeior_alphaB);
+    cv::createTrackbar("Limite superior Azul", "Imagen original", &superior_alphaB, 255, funcionR, &superior_alphaB);
+    cv::createTrackbar("Limite inferior Verde", "Imagen original", &infeior_alphaG, 255, funcionR, &infeior_alphaG);
+    cv::createTrackbar("Limite superior Verde", "Imagen original", &superior_alphaG, 255, funcionR, &superior_alphaG);
+    cv::createTrackbar("Limite inferior Rojo", "Imagen original", &infeior_alphaR, 255, funcionR, &infeior_alphaR);
+    cv::createTrackbar("Limite superior Rojo", "Imagen original", &superior_alphaR, 255, funcionR, &superior_alphaR);
+    cv::imshow("Imagen original", Original);
+
+
 }
 
 void MainWindow::on_open_clicked()

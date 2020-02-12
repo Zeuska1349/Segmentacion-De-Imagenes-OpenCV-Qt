@@ -143,12 +143,10 @@ public:
 
         horizontalLayoutWidget = new QWidget(centralwidget);
         horizontalLayoutWidget->setObjectName(QStringLiteral("horizontalLayoutWidget"));
-        horizontalLayoutWidget->setGeometry(QRect(10, 10, 771, 391));
+        horizontalLayoutWidget->setGeometry(QRect(100, 10, 771, 391));
         imgContainers = new QHBoxLayout(horizontalLayoutWidget);
         imgContainers->setObjectName(QStringLiteral("imgContainers"));
         imgContainers->setContentsMargins(0, 0, 0, 0);
-        imgResultado = new QLabel(horizontalLayoutWidget);
-        imgResultado->setObjectName(QStringLiteral("imgResultado"));
 
         imgContainers->addWidget(imgResultado);
 
@@ -182,7 +180,7 @@ public:
         cromaticoBut->setText(QApplication::translate("MainWindow", "Cromatico", 0));
         //label_4->setText(QApplication::translate("MainWindow", "Umbral", 0));
         AbrirBut->setText(QApplication::translate("MainWindow", "Abrir", 0));
-        imgResultado->setText(QApplication::translate("MainWindow", "Para utilizar los metodos\nde segmentacion\n seguir los siguientes pasos:\n1.- Abrir imagen a segmentar\n2.- Seleccionar el modo de segmentado\nApareceran 3 nuevas ventanas:\nEn la ventana Original\nse seleccionan los pixeles\npara la segmentacion\nuna vez seleccionados presione 'c' para\nrealizar la segmentacion.\nSi desea cambiar algun color de la seleccion\nsolo seleccionar el cuadro en la ventana Cuadro\ny asi se removerá el color.\nEl resultado se muestra en la ventana Color\nPuede guardar la imagen despues\n de haber sido segmentada oprimiedno\n click derecho, se guardara\n con el nombre segmentado.jpg\n", 0));
+        //imgResultado->setText(QApplication::translate("MainWindow", "Para utilizar los metodos\nde segmentacion\n seguir los siguientes pasos:\n1.- Abrir imagen a segmentar\n2.- Seleccionar el modo de segmentado\nApareceran 3 nuevas ventanas:\nEn la ventana Original\nse seleccionan los pixeles\npara la segmentacion\nuna vez seleccionados presione 'c' para\nrealizar la segmentacion.\nSi desea cambiar algun color de la seleccion\nsolo seleccionar el cuadro en la ventana Cuadro\ny asi se removerá el color.\nEl resultado se muestra en la ventana Color\nPuede guardar la imagen despues\n de haber sido segmentada oprimiedno\n click derecho, se guardara\n con el nombre segmentado.jpg\n", 0));
         imgOriginal->setText(QApplication::translate("MainWindow", "Abrir Imagen", 0));
     } // retranslateUi
 
